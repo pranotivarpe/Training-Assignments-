@@ -1,0 +1,31 @@
+import java.awt.*;
+import java.awt.event.*;
+public class InfoAWT extends Frame implements ActionListener {
+Button b1, b2;
+Label l;
+InfoAWT() {
+b1 = new Button("A");
+b2 = new Button("B");
+l = new Label();
+setLayout(new FlowLayout());
+add(b1);
+add(b2);
+add(l);
+b1.addActionListener(this);
+b2.addActionListener(this);
+setSize(400, 200);
+setVisible(true);
+}
+public void actionPerformed(ActionEvent e) {
+if (e.getSource() == b1) {
+l.setText("Name: Pranoti | Course: MCA | Roll:
+1272240903 | College: MIT WPU");
+}
+if (e.getSource() == b2) {
+l.setText("Previous Semester CGPA: 7.91");
+}
+}
+public static void main(String[] args) {
+new InfoAWT();
+}
+}
