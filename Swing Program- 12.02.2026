@@ -1,0 +1,29 @@
+import javax.swing.*;
+import java.awt.event.*;
+public class WordCount {
+public static void main(String[] args) {
+JFrame f = new JFrame("Word Counter");
+JTextArea ta = new JTextArea();
+JButton b = new JButton("Count");
+JLabel l = new JLabel();
+ta.setBounds(20, 20, 300, 150);
+b.setBounds(120, 180, 100, 30);
+l.setBounds(20, 220, 300, 30);
+b.addActionListener(new ActionListener() {
+public void actionPerformed(ActionEvent e) {
+String text = ta.getText();
+int chars = text.length();
+String words[] = text.trim().split("\\s+");
+int wordCount = words.length;
+l.setText("Words: " + wordCount + "
+Characters: " + chars);
+}
+});
+f.add(ta);
+f.add(b);
+f.add(l);
+f.setSize(360, 320);
+f.setLayout(null);
+f.setVisible(true);
+}
+}
