@@ -1,1 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MCA To-Do List</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: white;
+      }
+
+      .container {
+        background: #1e293b;
+        padding: 30px;
+        border-radius: 10px;
+        width: 350px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .input-section {
+        display: flex;
+        gap: 10px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .add-btn {
+        background: #2563eb;
+        color: white;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+
+      li {
+        background: #334155;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      li.completed {
+        text-decoration: line-through;
+        opacity: 0.6;
+      }
+
+      .delete-btn {
+        background: red;
+        color: white;
+      }
+
+      .task-count {
+        margin-top: 15px;
+        text-align: center;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>To-Do List</h2>
+
+      <div class="input-section">
+        <input type="text" id="taskInput" placeholder="Enter a task" />
+        <button class="add-btn" onclick="addTask()">Add</button>
+      </div>
+
+      <ul id="taskList"></ul>
+
+      <div class="task-count">Total Tasks: <span id="count">0</span></div>
+    </div>
+
+    <script>
+      let count = 0;
+
+      function addTask() {
+        let taskInput = document.getElementById("taskInput");
+        let taskText = taskInput.value.trim();
+
+        if (taskText === "") {
+          alert("Please enter a task!");
+          return;
+        }
+
+        let li = document.createElement("li");
+        li.innerHTML = `
+        <span onclick="toggleComplete(this)">${taskText}</span>
+        <button class="delete-btn" onclick="deleteTask(this)">X</button>
+    `;
+
+        document.getElementById("taskList").appendChild(li);
+
+        taskInput.value = "";
+        count++;
+        updateCount();
+      }
+
+      function deleteTask(button) {
+        button.parentElement.remove();
+        count--;
+        updateCount();
+      }
+
+      function toggleComplete(task) {
+        task.parentElement.classList.toggle("completed");
+      }
+
+      function updateCount() {
+        document.getElementById("count").innerText = count;
+      }
+
+      // Add task when pressing Enter
+      document
+        .getElementById("taskInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            addTask();
+          }
+        });
+    </script>
+  </body>
+</html>
 
