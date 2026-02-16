@@ -1,1 +1,85 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Increment Decrement Counter</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+        }
+
+        #counter {
+            font-size: 40px;
+            margin: 20px;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .increment {
+            background-color: green;
+            color: white;
+        }
+
+        .decrement {
+            background-color: red;
+            color: white;
+        }
+
+        .reset {
+            background-color: gray;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Counter Application</h2>
+
+    <div id="counter">0</div>
+
+    <button class="btn increment" onclick="increment()">+</button>
+    <button class="btn decrement" onclick="decrement()">-</button>
+    <button class="btn reset" onclick="reset()">Reset</button>
+
+    <script>
+        let count = 0;
+
+        function increment() {
+            count++;
+            document.getElementById("counter").innerHTML = count;
+        }
+
+        function decrement() {
+            if (count > 0) {
+                count--;
+                document.getElementById("counter").innerHTML = count;
+            } else {
+                alert("Counter cannot go below 0");
+            }
+        }
+
+        function reset() {
+            count = 0;
+            document.getElementById("counter").innerHTML = count;
+        }
+    </script>
+
+</body>
+</html>
