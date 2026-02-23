@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Election Results - Online Voting System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="/dashboard" class="navbar-brand">&#127911; Voting System</a>
+      <ul class="navbar-nav">
+        <li><a th:href="@{/dashboard}">Dashboard</a></li>
+        <li>
+          <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button
+              type="submit"
+              class="btn btn-sm btn-outline"
+              style="color: white; border-color: rgba(255, 255, 255, 0.5);"
+            >
+              Logout
+            </button>
+          </form>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <!-- Election Info -->
+      <div class="card">
+        <h2
+          th:text="${election.title}"
+          style="color: var(--dark); margin-bottom: 0.25rem;"
+        ></h2>
+        <p
+          th:text="${election.description}"
+          style="color: var(--text-light);"
+        ></p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" th:text="${totalVotes}">0</div>
+          <div class="stat-label">Total Votes Cast</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" th:text="${#lists.size(candidates)}">0</div>
+          <div class="stat-label">Candidates</div>
+        </div>
+        <div class="stat-card" th:if="${winners != null && !winners.isEmpty()}">
+          <div
+            class="stat-value"
+            style="font-size: 1.3rem;"
+            th:text="${winners[0].name}"
+          >
+            -
+          </div>
+          <div class="stat-label">&#127942; Leading Candidate</div>
+        </div>
+      </div>
+
+      <!-- Results Bars -->
+      <div class="card">
+        <div class="card-header">&#128202; Vote Distribution</div>
+
+        <div th:if="${totalVotes == 0}" class="empty-state">
+          <p>No votes have been cast yet.</p>
+        </div>
+
+        <div th:unless="${totalVotes == 0}">
+          <div class="result-bar" th:each="candidate,iterStat : ${candidates}">
+            <div class="bar-header">
+              <span>
+                <strong th:text="${candidate.name}"></strong>
+                <span
+                  th:if="${candidate.party}"
+                  th:text="' (' + ${candidate.party} + ')'"
+                  style="color: var(--text-light);"
+                ></span>
+              </span>
+              <span th:text="${candidate.voteCount} + ' votes'"></span>
+            </div>
+            <div class="bar-track">
+              <div
+                class="bar-fill"
+                th:classappend="${iterStat.index == 0} ? 'winner' : ''"
+                th:style="'width:' + ${totalVotes > 0 ? (candidate.voteCount * 100 / totalVotes) : 0} + '%'"
+                th:text="${totalVotes > 0 ? #numbers.formatDecimal(candidate.voteCount * 100.0 / totalVotes, 1, 1) + '%' : '0%'}"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Winner Announcement -->
+      <div
+        th:if="${winners != null && !winners.isEmpty()}"
+        class="card"
+        style="border-left: 4px solid var(--success);"
+      >
+        <h3 style="color: var(--success); margin-bottom: 0.5rem;">
+          &#127942; Winner
+        </h3>
+        <div th:each="winner : ${winners}">
+          <p
+            style="font-size: 1.2rem; font-weight: 600;"
+            th:text="${winner.name}"
+          ></p>
+          <p
+            th:if="${winner.party}"
+            style="color: var(--text-light);"
+            th:text="${winner.party}"
+          ></p>
+          <p th:text="'Total Votes: ' + ${winner.voteCount}"></p>
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <a th:href="@{/dashboard}" class="btn btn-secondary"
+          >&#8592; Back to Dashboard</a
+        >
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2026 Online Voting System. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

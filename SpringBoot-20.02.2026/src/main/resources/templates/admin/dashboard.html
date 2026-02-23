@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Online Voting System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="/admin/dashboard" class="navbar-brand">&#127911; Admin Panel</a>
+      <ul class="navbar-nav">
+        <li><a th:href="@{/dashboard}">Voter Dashboard</a></li>
+        <li>
+          <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button
+              type="submit"
+              class="btn btn-sm btn-outline"
+              style="color: white; border-color: rgba(255, 255, 255, 0.5);"
+            >
+              Logout
+            </button>
+          </form>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <!-- Alerts -->
+      <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" th:text="${#lists.size(elections)}">0</div>
+          <div class="stat-label">Total Elections</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" th:text="${#lists.size(users)}">0</div>
+          <div class="stat-label">Registered Users</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/admin/elections/new}" class="btn btn-primary btn-lg"
+          >+ Create New Election</a
+        >
+      </div>
+
+      <!-- Elections Table -->
+      <div class="card">
+        <div class="card-header">All Elections</div>
+        <div th:if="${#lists.isEmpty(elections)}" class="empty-state">
+          <p>No elections created yet. Create your first election!</p>
+        </div>
+        <div class="table-container" th:unless="${#lists.isEmpty(elections)}">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Candidates</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="election : ${elections}">
+                <td th:text="${election.title}"></td>
+                <td
+                  th:text="${#temporals.format(election.startDate, 'dd MMM yyyy, hh:mm a')}"
+                ></td>
+                <td
+                  th:text="${#temporals.format(election.endDate, 'dd MMM yyyy, hh:mm a')}"
+                ></td>
+                <td>
+                  <span
+                    class="badge"
+                    th:classappend="${election.computeStatus().name() == 'ACTIVE'} ? 'badge-active' : (${election.computeStatus().name() == 'UPCOMING'} ? 'badge-upcoming' : 'badge-completed')"
+                    th:text="${election.computeStatus().name()}"
+                  ></span>
+                </td>
+                <td th:text="${election.candidates.size()}"></td>
+                <td>
+                  <div class="actions" style="margin-top: 0;">
+                    <a
+                      th:href="@{/admin/elections/{id}(id=${election.id})}"
+                      class="btn btn-sm btn-primary"
+                      >Manage</a
+                    >
+                    <a
+                      th:href="@{/elections/{id}/results(id=${election.id})}"
+                      class="btn btn-sm btn-secondary"
+                      >Results</a
+                    >
+                    <form
+                      th:action="@{/admin/elections/{id}/delete(id=${election.id})}"
+                      method="post"
+                      style="display: inline;"
+                    >
+                      <button
+                        type="submit"
+                        class="btn btn-sm btn-danger"
+                        onclick="return confirm('Are you sure you want to delete this election?');"
+                      >
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">Registered Users</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Voter ID</th>
+                <th>Role</th>
+                <th>Registered</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="u : ${users}">
+                <td th:text="${u.fullName}"></td>
+                <td th:text="${u.email}"></td>
+                <td th:text="${u.voterId}"></td>
+                <td>
+                  <span
+                    class="badge"
+                    th:classappend="${u.role.name() == 'ROLE_ADMIN'} ? 'badge-active' : 'badge-upcoming'"
+                    th:text="${u.role.name() == 'ROLE_ADMIN' ? 'Admin' : 'Voter'}"
+                  ></span>
+                </td>
+                <td
+                  th:text="${#temporals.format(u.createdAt, 'dd MMM yyyy')}"
+                ></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2026 Online Voting System. Admin Panel.</p>
+    </footer>
+  </body>
+</html>

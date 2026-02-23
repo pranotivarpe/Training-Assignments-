@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${election.title} + ' - Online Voting System'">
+      Election
+    </title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="/dashboard" class="navbar-brand">&#127911; Voting System</a>
+      <ul class="navbar-nav">
+        <li><a th:href="@{/dashboard}">Dashboard</a></li>
+        <li>
+          <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button
+              type="submit"
+              class="btn btn-sm btn-outline"
+              style="color: white; border-color: rgba(255, 255, 255, 0.5);"
+            >
+              Logout
+            </button>
+          </form>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <!-- Alerts -->
+      <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+      <!-- Election Header -->
+      <div class="card">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
+          "
+        >
+          <div>
+            <h2
+              th:text="${election.title}"
+              style="color: var(--dark); margin-bottom: 0.5rem;"
+            ></h2>
+            <p
+              th:text="${election.description}"
+              style="color: var(--text-light); margin-bottom: 0.75rem;"
+            ></p>
+            <div class="meta">
+              <span
+                th:text="'Start: ' + ${#temporals.format(election.startDate, 'dd MMM yyyy, hh:mm a')}"
+              ></span>
+              <span
+                th:text="'End: ' + ${#temporals.format(election.endDate, 'dd MMM yyyy, hh:mm a')}"
+              ></span>
+            </div>
+          </div>
+          <span
+            class="badge"
+            th:classappend="${election.computeStatus().name() == 'ACTIVE'} ? 'badge-active' : (${election.computeStatus().name() == 'UPCOMING'} ? 'badge-upcoming' : 'badge-completed')"
+            th:text="${election.computeStatus().name()}"
+          ></span>
+        </div>
+      </div>
+
+      <!-- Already Voted Message -->
+      <div th:if="${hasVoted}" class="alert alert-info">
+        &#9989; You have already cast your vote in this election. Thank you for
+        participating!
+        <div style="margin-top: 0.5rem;">
+          <a
+            th:href="@{/elections/{id}/results(id=${election.id})}"
+            class="btn btn-sm btn-primary"
+            >View Results</a
+          >
+        </div>
+      </div>
+
+      <!-- Voting Form -->
+      <div th:if="${!hasVoted && election.computeStatus().name() == 'ACTIVE'}">
+        <div class="card">
+          <div class="card-header">Select Your Candidate</div>
+          <form
+            th:action="@{/elections/{id}/vote(id=${election.id})}"
+            method="post"
+            id="voteForm"
+          >
+            <div class="candidate-list">
+              <div th:each="candidate : ${candidates}">
+                <label
+                  class="candidate-card"
+                  th:for="'candidate_' + ${candidate.id}"
+                >
+                  <input
+                    type="radio"
+                    name="candidateId"
+                    th:id="'candidate_' + ${candidate.id}"
+                    th:value="${candidate.id}"
+                    required
+                    style="display: none;"
+                    onchange="this.closest('.candidate-card').classList.add('selected'); document.querySelectorAll('.candidate-card').forEach(c => { if(c !== this.closest('.candidate-card')) c.classList.remove('selected'); });"
+                  />
+                  <div class="candidate-info">
+                    <div class="name" th:text="${candidate.name}"></div>
+                    <div
+                      class="party"
+                      th:if="${candidate.party}"
+                      th:text="${candidate.party}"
+                    ></div>
+                    <div
+                      th:if="${candidate.description}"
+                      style="
+                        margin-top: 0.25rem;
+                        font-size: 0.85rem;
+                        color: var(--text-light);
+                      "
+                      th:text="${candidate.description}"
+                    ></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <button
+                type="submit"
+                class="btn btn-success btn-lg"
+                onclick="return confirm('Are you sure you want to cast your vote? This action cannot be undone.');"
+              >
+                &#9745; Cast Your Vote
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Election Not Active -->
+      <div
+        th:if="${election.computeStatus().name() != 'ACTIVE' && !hasVoted}"
+        class="alert alert-warning"
+      >
+        This election is not currently active. Voting is not allowed.
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <a th:href="@{/dashboard}" class="btn btn-secondary"
+          >&#8592; Back to Dashboard</a
+        >
+        <a
+          th:href="@{/elections/{id}/results(id=${election.id})}"
+          class="btn btn-outline"
+          style="margin-left: 0.5rem;"
+          >View Results</a
+        >
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2026 Online Voting System. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

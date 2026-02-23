@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Election - Online Voting System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="/admin/dashboard" class="navbar-brand">&#127911; Admin Panel</a>
+      <ul class="navbar-nav">
+        <li><a th:href="@{/admin/dashboard}">Back to Admin</a></li>
+      </ul>
+    </nav>
+
+    <div class="container" style="max-width: 700px;">
+      <div class="card">
+        <div class="card-header">Create New Election</div>
+
+        <form
+          th:action="@{/admin/elections}"
+          th:object="${election}"
+          method="post"
+        >
+          <div class="form-group">
+            <label for="title">Election Title *</label>
+            <input
+              type="text"
+              id="title"
+              th:field="*{title}"
+              class="form-control"
+              th:classappend="${#fields.hasErrors('title')} ? 'error' : ''"
+              placeholder="e.g., Presidential Election 2026"
+              required
+            />
+            <span
+              th:if="${#fields.hasErrors('title')}"
+              th:errors="*{title}"
+              class="error-text"
+            ></span>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              th:field="*{description}"
+              class="form-control"
+              rows="3"
+              placeholder="Brief description of the election"
+            ></textarea>
+          </div>
+
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"
+          >
+            <div class="form-group">
+              <label for="startDate">Start Date & Time *</label>
+              <input
+                type="datetime-local"
+                id="startDate"
+                th:field="*{startDate}"
+                class="form-control"
+                th:classappend="${#fields.hasErrors('startDate')} ? 'error' : ''"
+                required
+              />
+              <span
+                th:if="${#fields.hasErrors('startDate')}"
+                th:errors="*{startDate}"
+                class="error-text"
+              ></span>
+            </div>
+            <div class="form-group">
+              <label for="endDate">End Date & Time *</label>
+              <input
+                type="datetime-local"
+                id="endDate"
+                th:field="*{endDate}"
+                class="form-control"
+                th:classappend="${#fields.hasErrors('endDate')} ? 'error' : ''"
+                required
+              />
+              <span
+                th:if="${#fields.hasErrors('endDate')}"
+                th:errors="*{endDate}"
+                class="error-text"
+              ></span>
+            </div>
+          </div>
+
+          <p
+            style="
+              color: var(--text-light);
+              font-size: 0.85rem;
+              margin-bottom: 1rem;
+            "
+          >
+            You can add candidates after creating the election.
+          </p>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Create Election
+            </button>
+            <a th:href="@{/admin/dashboard}" class="btn btn-secondary"
+              >Cancel</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
