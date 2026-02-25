@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Form Validation</title>
+    <title>Feedback Form Validation</title>
 
     <style>
       body {
@@ -11,38 +10,99 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
       }
 
       .form-container {
         background: white;
         padding: 30px;
         border-radius: 8px;
-        width: 300px;
+        width: 380px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       }
 
       h2 {
         text-align: center;
+        margin-bottom: 5px;
+        color: #0077cc;
+      }
+
+      p.subtitle {
+        text-align: center;
+        color: #888;
+        font-size: 13px;
         margin-bottom: 20px;
       }
 
-      input {
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 4px;
+        color: #333;
+      }
+
+      input,
+      select,
+      textarea {
         width: 100%;
         padding: 10px;
         margin-bottom: 5px;
         border: 1px solid #ccc;
         border-radius: 4px;
+        box-sizing: border-box;
+        font-family: Arial;
+        font-size: 14px;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 90px;
+      }
+
+      /* Star Rating */
+      .star-group {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        margin-bottom: 5px;
+      }
+
+      .star-group input[type="radio"] {
+        display: none;
+      }
+
+      .star-group label {
+        font-size: 28px;
+        color: #ccc;
+        cursor: pointer;
+        margin-right: 4px;
+        font-weight: normal;
+      }
+
+      .star-group input[type="radio"]:checked ~ label,
+      .star-group label:hover,
+      .star-group label:hover ~ label {
+        color: #f5a623;
       }
 
       button {
         width: 100%;
-        padding: 10px;
+        padding: 11px;
         background: #0077cc;
         color: white;
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        font-size: 15px;
+        margin-top: 5px;
+      }
+
+      button:hover {
+        background: #005fa3;
       }
 
       .error {
@@ -54,26 +114,72 @@
       .success {
         color: green;
         text-align: center;
-        margin-top: 10px;
+        margin-top: 12px;
+        font-weight: bold;
+        font-size: 14px;
       }
     </style>
   </head>
 
   <body>
     <div class="form-container">
-      <h2>Registration Form</h2>
+      <h2>Feedback Form</h2>
+      <p class="subtitle">We value your opinion. Please share your feedback!</p>
 
       <form onsubmit="return validateForm()">
-        <input type="text" id="name" placeholder="Enter Name" />
+        <!-- Name -->
+        <label for="name">Full Name <span style="color: red;">*</span></label>
+        <input type="text" id="name" placeholder="Enter your full name" />
         <div id="nameError" class="error"></div>
 
-        <input type="text" id="email" placeholder="Enter Email" />
+        <!-- Email -->
+        <label for="email"
+          >Email Address <span style="color: red;">*</span></label
+        >
+        <input type="text" id="email" placeholder="Enter your email" />
         <div id="emailError" class="error"></div>
 
-        <input type="password" id="password" placeholder="Enter Password" />
-        <div id="passwordError" class="error"></div>
+        <!-- Category -->
+        <label for="category"
+          >Feedback Category <span style="color: red;">*</span></label
+        >
+        <select id="category">
+          <option value="">-- Select Category --</option>
+          <option value="general">General</option>
+          <option value="product">Product</option>
+          <option value="support">Support</option>
+          <option value="billing">Billing</option>
+          <option value="other">Other</option>
+        </select>
+        <div id="categoryError" class="error"></div>
 
-        <button type="submit">Submit</button>
+        <!-- Star Rating -->
+        <label>Rating <span style="color: red;">*</span></label>
+        <div class="star-group">
+          <input type="radio" id="star5" name="rating" value="5" />
+          <label for="star5">&#9733;</label>
+          <input type="radio" id="star4" name="rating" value="4" />
+          <label for="star4">&#9733;</label>
+          <input type="radio" id="star3" name="rating" value="3" />
+          <label for="star3">&#9733;</label>
+          <input type="radio" id="star2" name="rating" value="2" />
+          <label for="star2">&#9733;</label>
+          <input type="radio" id="star1" name="rating" value="1" />
+          <label for="star1">&#9733;</label>
+        </div>
+        <div id="ratingError" class="error"></div>
+
+        <!-- Message -->
+        <label for="message"
+          >Your Feedback <span style="color: red;">*</span></label
+        >
+        <textarea
+          id="message"
+          placeholder="Write your feedback here (min 20 characters)..."
+        ></textarea>
+        <div id="messageError" class="error"></div>
+
+        <button type="submit">Submit Feedback</button>
         <div id="successMsg" class="success"></div>
       </form>
     </div>
@@ -82,52 +188,84 @@
       function validateForm() {
         let name = document.getElementById("name").value.trim();
         let email = document.getElementById("email").value.trim();
-        let password = document.getElementById("password").value.trim();
+        let category = document.getElementById("category").value;
+        let message = document.getElementById("message").value.trim();
+
+        // Get selected star rating
+        let ratingInputs = document.querySelectorAll('input[name="rating"]');
+        let rating = "";
+        ratingInputs.forEach(function (input) {
+          if (input.checked) rating = input.value;
+        });
 
         let valid = true;
 
-       
+        // Clear all previous errors
         document.getElementById("nameError").innerHTML = "";
         document.getElementById("emailError").innerHTML = "";
-        document.getElementById("passwordError").innerHTML = "";
+        document.getElementById("categoryError").innerHTML = "";
+        document.getElementById("ratingError").innerHTML = "";
+        document.getElementById("messageError").innerHTML = "";
         document.getElementById("successMsg").innerHTML = "";
 
         // Name Validation
         if (name === "") {
-          document.getElementById("nameError").innerHTML = "Name is required";
+          document.getElementById("nameError").innerHTML =
+            "Full name is required.";
+          valid = false;
+        } else if (name.length < 3) {
+          document.getElementById("nameError").innerHTML =
+            "Name must be at least 3 characters.";
           valid = false;
         }
 
         // Email Validation
-        let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-
+        let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
         if (email === "") {
-          document.getElementById("emailError").innerHTML = "Email is required";
+          document.getElementById("emailError").innerHTML =
+            "Email address is required.";
           valid = false;
         } else if (!email.match(emailPattern)) {
           document.getElementById("emailError").innerHTML =
-            "Invalid email format";
+            "Please enter a valid email address.";
           valid = false;
         }
 
-        // Password Validation
-        if (password === "") {
-          document.getElementById("passwordError").innerHTML =
-            "Password is required";
-          valid = false;
-        } else if (password.length < 6) {
-          document.getElementById("passwordError").innerHTML =
-            "Password must be at least 6 characters";
+        // Category Validation
+        if (category === "") {
+          document.getElementById("categoryError").innerHTML =
+            "Please select a feedback category.";
           valid = false;
         }
 
-      
+        // Rating Validation
+        if (rating === "") {
+          document.getElementById("ratingError").innerHTML =
+            "Please select a rating.";
+          valid = false;
+        }
+
+        // Message Validation
+        if (message === "") {
+          document.getElementById("messageError").innerHTML =
+            "Feedback message is required.";
+          valid = false;
+        } else if (message.length < 20) {
+          document.getElementById("messageError").innerHTML =
+            "Feedback must be at least 20 characters (currently " +
+            message.length +
+            ").";
+          valid = false;
+        }
+
+        // Success
         if (valid) {
           document.getElementById("successMsg").innerHTML =
-            "Form Submitted Successfully!";
+            "✅ Thank you! Your feedback has been submitted successfully.";
+          document.querySelector("form").reset();
         }
 
-        return valid; 
+        return false; // Prevent actual form submission (demo mode)
       }
     </script>
   </body>
