@@ -1,0 +1,57 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Orders - EcomAnalytics{% endblock %}
+{% block page_title %}Orders{% endblock %}
+{% block page_subtitle %}Track and manage all customer orders.{% endblock %}
+
+{% block content %}
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <form method="get" class="filter-form">
+    <label for="status">Filter by Status:</label>
+    <select name="status" id="status" onchange="this.form.submit()">
+      <option value="">All Statuses</option>
+      {% for value, label in status_choices %}
+      <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    {% if selected_status %}
+    <a href="{% url 'dashboard:orders' %}" class="btn-clear">✕ Clear</a>
+    {% endif %}
+  </form>
+  <span class="result-count">{{ orders|length }} Order(s)</span>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Customer</th>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Order Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td class="order-id">#{{ order.id }}</td>
+          <td class="product-name">{{ order.customer.name }}</td>
+          <td>{{ order.product.name }}</td>
+          <td>{{ order.quantity }}</td>
+          <td class="amount">${{ order.total_price }}</td>
+          <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+          <td>{{ order.order_date|date:"d M Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="empty-row">No orders found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

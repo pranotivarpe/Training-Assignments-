@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login | EcomAnalytics</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="auth-body">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-icon">📊</div>
+        <div>
+          <p class="login-kicker">EcomAnalytics</p>
+          <h1>Admin Console</h1>
+          <p class="login-subtext">Single admin access for the analytics suite.</p>
+        </div>
+      </div>
+
+      {% if messages %}
+      <div class="login-messages">
+        {% for message in messages %}
+        <p class="message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="post" class="login-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="form-errors">
+          {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-group {% if form.username.errors %}has-error{% endif %}">
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+          {% for error in form.username.errors %}
+          <span class="field-error">{{ error }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="form-group {% if form.password.errors %}has-error{% endif %}">
+          <label for="{{ form.password.id_for_label }}">Password</label>
+          {{ form.password }}
+          {% for error in form.password.errors %}
+          <span class="field-error">{{ error }}</span>
+          {% endfor %}
+        </div>
+
+        <button type="submit" class="btn-primary">Sign in</button>
+      </form>
+
+      <p class="login-meta">
+        Tip: use your Django superuser credentials. Only staff accounts may access
+        the dashboard.
+      </p>
+    </div>
+  </body>
+</html>

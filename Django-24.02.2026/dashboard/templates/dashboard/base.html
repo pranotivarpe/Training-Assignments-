@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}EcomAnalytics{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">📊</div>
+        <span class="brand-name">EcomAnalytics</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a
+          href="{% url 'dashboard:index' %}"
+          class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+        >
+          <span class="nav-icon">🏠</span>
+          <span>Dashboard</span>
+        </a>
+        <a
+          href="{% url 'dashboard:orders' %}"
+          class="nav-item {% if request.resolver_match.url_name == 'orders' %}active{% endif %}"
+        >
+          <span class="nav-icon">📦</span>
+          <span>Orders</span>
+        </a>
+        <a
+          href="{% url 'dashboard:products' %}"
+          class="nav-item {% if request.resolver_match.url_name == 'products' %}active{% endif %}"
+        >
+          <span class="nav-icon">🛍️</span>
+          <span>Products</span>
+        </a>
+        <a
+          href="{% url 'dashboard:customers' %}"
+          class="nav-item {% if request.resolver_match.url_name == 'customers' %}active{% endif %}"
+        >
+          <span class="nav-icon">👥</span>
+          <span>Customers</span>
+        </a>
+        <a href="/admin/" class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span>Admin Panel</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <span>Django E-Commerce Dashboard</span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">
+            {% block page_title %}Dashboard{% endblock %}
+          </h1>
+          <p class="page-subtitle">
+            {% block page_subtitle %}Welcome back! Here's what's happening
+            today.{% endblock %}
+          </p>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-date">📅 {% now "D, d M Y" %}</div>
+          {% if request.user.is_authenticated %}
+          <div class="topbar-user">
+            <div class="user-avatar">
+              {{ request.user.get_short_name|default:request.user.username|slice:":2"|upper }}
+            </div>
+            <div class="user-meta">
+              <span class="user-name">
+                {{ request.user.get_full_name|default:request.user.username }}
+              </span>
+              <a href="{% url 'dashboard:logout' %}" class="logout-link">Sign out</a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </header>
+
+      <div class="content-area">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>
